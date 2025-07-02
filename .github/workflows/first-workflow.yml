@@ -8,3 +8,9 @@ jobs:
     steps:
       - name: Print Hello
         run: echo "Hello, GitHub Actions!"
+
+      - name: Show Current Date
+        run: date
+
+      - name: List files
+        run: ls -la
