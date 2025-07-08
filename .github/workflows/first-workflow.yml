@@ -14,3 +14,6 @@ jobs:
 
       - name: List files
         run: ls -la
+
+      - name: Print a secret (hidden in logs)
+        run: echo "Secret is ${{ secrets.MY_SECRET_MESSAGE }}"
