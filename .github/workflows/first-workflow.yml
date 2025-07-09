@@ -1,19 +1,28 @@
-name: My First Workflow
+name: Deploy to EC2
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  say-hello:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Print Hello
-        run: echo "Hello, GitHub Actions!"
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      - name: Show Current Date
-        run: date
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-      - name: List files
-        run: ls -la
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H ec2-13-60-27-36.eu-north-1.compute.amazonaws.com >> ~/.ssh/known_hosts
 
-      - name: Print a secret (hidden in logs)
-        run: echo "Secret is ${{ secrets.MY_SECRET_MESSAGE }}"
+      - name: Connect and Deploy
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@ec2-13-60-27-36.eu-north-1.compute.amazonaws.com "echo '✅ Deployment success!' && uptime"
